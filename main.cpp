@@ -6,6 +6,7 @@
 #include <queue>
 #include <unordered_map>
 #include <stack>
+#include <map>
 
 using namespace std;
 
@@ -17,5 +18,10 @@ struct ListNode {
 };
 
 int main() {
-    vector<ListNode*> ans(10, new ListNode(-1));
+    vector<int> a = {1,2,3,4};
+    vector<int> b(a.begin(), a.end());
+    swap(a[0], a[2]);
+    a.insert(a.begin(), 111);
+    a.erase(a.begin());
+    cout<< a[0] << a[1] << a[2] <<a[3] <<endl;
 }
