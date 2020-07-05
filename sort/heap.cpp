@@ -31,6 +31,38 @@ public:
     }
 };
 
+/**
+ * 215. 数组中的第K个最大元素
+ * 快速选择做法
+ */
+class Solution2 {
+public:
+
+    int partition(int l, int h, vector<int> &nums) {
+        int i = l, j = h - 1, q = nums[h];
+        while (i <= j) {
+            while (i <= j && nums[i] < q) i++;
+            while (i <= j && nums[j] > q) j--;
+            if (i <= j)
+                swap(nums[i++], nums[j--]);
+        }
+        swap(nums[i], nums[h]);
+        return i;
+    }
+
+    int findKthLargest(vector<int> &nums, int k) {
+        k = nums.size() - k;
+        int i = 0, j = nums.size() - 1;
+        while (i <= j) {
+            int t = partition(i, j, nums);
+            if (t == k) break;
+            else if (t < k) i = t + 1;
+            else j = t - 1;
+        }
+        return nums[k];
+    }
+};
+
 
 /**
  * 5429. 数组中的 k 个最强值
@@ -42,12 +74,13 @@ public:
  * 请返回由数组中最强的 k 个值组成的列表。答案可以以 任意顺序 返回。
  * 中位数 是一个有序整数列表中处于中间位置的值。形式上，如果列表的长度为 n ，那么中位数就是该有序列表（下标从 0 开始）中位于 ((n - 1) / 2) 的元素。
  */
-class Solution2 {
+class Solution3 {
 public:
 
     struct node { // 额外参数可以通过构建node来加入
         int x, m;
-        node(int a, int b): x(a), m(b){}
+
+        node(int a, int b) : x(a), m(b) {}
     };
 
     struct cmp { // 若要构建小顶堆，则满足>条件的应该设为true，true对应的值会被放到堆底
@@ -63,9 +96,9 @@ public:
         }
     };
 
-    vector<int> getStrongest(vector<int>& arr, int k) {
+    vector<int> getStrongest(vector<int> &arr, int k) {
         sort(arr.begin(), arr.end());
-        int m = arr[(arr.size()-1)/2];
+        int m = arr[(arr.size() - 1) / 2];
         priority_queue<node, vector<node>, cmp> pq;
 
         cmp tcmp = cmp();
@@ -89,22 +122,23 @@ public:
 /**
  * 上题更好的解法
  */
-class Solution3 {
+class Solution4 {
     vector<int> ans;
-    vector<pair<int,int>> a;
-    int A(int x)
-    {
-        return x<0?-x:x;
+    vector<pair<int, int>> a;
+
+    int A(int x) {
+        return x < 0 ? -x : x;
     }
+
 public:
-    vector<int> getStrongest(vector<int>& arr, int k) {
-        sort(arr.begin(),arr.end());
-        int n=arr.size(),i;
+    vector<int> getStrongest(vector<int> &arr, int k) {
+        sort(arr.begin(), arr.end());
+        int n = arr.size(), i;
         a.clear();
         ans.clear();
-        for(auto c:arr)a.push_back(make_pair(A(c-arr[n-1>>1]),c)); //位运算，等价于(n-1)/2
-        sort(a.begin(),a.end(),greater<pair<int,int>>()); //默认按照pair的first排序
-        for(i=0;i<k;i++)ans.push_back(a[i].second);
+        for (auto c:arr)a.push_back(make_pair(A(c - arr[n - 1 >> 1]), c)); //位运算，等价于(n-1)/2
+        sort(a.begin(), a.end(), greater<pair<int, int>>()); //默认按照pair的first排序
+        for (i = 0; i < k; i++)ans.push_back(a[i].second);
         return ans;
     }
 };

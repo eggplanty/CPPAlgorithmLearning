@@ -20,12 +20,12 @@ public:
         for (auto &n : nums)
             ++m[n];
 
-        vector<vector<int>> buckets(nums.size()+1);
+        vector<vector<int>> buckets(nums.size() + 1);
         for (auto iter = m.begin(); iter != m.end(); iter++)
             buckets[iter->second].push_back(iter->first);
 
         vector<int> ans;
-        for (int i = buckets.size()-1; i >= 0; i--) {
+        for (int i = buckets.size() - 1; i >= 0; i--) {
             for (auto &b : buckets[i]) {
                 ans.push_back(b);
                 if (ans.size() == k)
@@ -47,12 +47,12 @@ public:
         for (auto &c : s)
             m[c]++;
 
-        vector<vector<char>> buckets(s.size()+1);
+        vector<vector<char>> buckets(s.size() + 1);
         for (auto iter = m.begin(); iter != m.end(); iter++)
             buckets[iter->second].push_back(iter->first);
 
         string ans;
-        for (int i = buckets.size()-1; i >= 0; i--) {
+        for (int i = buckets.size() - 1; i >= 0; i--) {
             for (auto &b : buckets[i]) {
                 ans += string(i, b);
             }
@@ -62,21 +62,31 @@ public:
 };
 
 /**
- * 75. 颜色分类 (荷兰国旗问题，三向快速切分)
- * 给定一个包含红色、白色和蓝色，一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的元素相邻，并
- * 按照红色、白色、蓝色顺序排列。此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
+ * 1481. 不同整数的最少数目
+ * 给你一个整数数组 arr 和一个整数 k 。现需要从数组中恰好移除 k 个元素，请找出移除后数组中不同整数的最少数目。
+ *
+ * 典型的桶排序，这里只需要记录各个频率的元素有多少即可，不用明确知道是什么
  */
 class Solution3 {
 public:
-    void sortColors(vector<int>& nums) {
-        int i = 0, k = 0, j = nums.size()-1;
-        while (k<=j) {
-            if (nums[k] == 0)
-                swap(nums[i++], nums[k++]);
-            else if (nums[k] == 2)
-                swap(nums[k], nums[j--]);
-            else
-                k++;
+    int findLeastNumOfUniqueInts(vector<int> &arr, int k) {
+        unordered_map<int, int> m;
+        for (auto n : arr)
+            m[n]++;
+
+        int cnt = m.size();
+        vector<int> buckets(arr.size() + 1, 0);
+        for (auto iter = m.begin(); iter != m.end(); iter++)
+            buckets[iter->second]++;
+
+        for (int i = 0; i < buckets.size(); i++) {
+            for (int j = 0; j < buckets[i]; ++j) {
+                k -= i;
+                if (k < 0)
+                    return cnt;
+                cnt--;
+            }
         }
+        return cnt;
     }
 };

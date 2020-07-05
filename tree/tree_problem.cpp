@@ -11,6 +11,13 @@
 
 using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 struct TreeNode {
     int val;
     TreeNode *left;
@@ -741,6 +748,7 @@ public:
 class Solution31 {
 public:
     int sum = 0;
+
     void dfs(TreeNode *root) {
         if (!root) return;
         dfs(root->right); // 先遍历右孩子
@@ -749,8 +757,206 @@ public:
         dfs(root->left);
     }
 
-    TreeNode* convertBST(TreeNode* root) {
+    TreeNode *convertBST(TreeNode *root) {
         dfs(root);
         return root;
+    }
+};
+
+/**
+ * 235. 二叉搜索树的最近公共祖先
+ * 给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
+ * 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+ *
+ * 对二叉搜索树找公共祖先只需要按照值来找即可，公共祖先一定是第一个值在[p, q]之间的节点
+ */
+class Solution32 {
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        // q>p后者p>q都可，所以需要两个同时判断，这里不考虑root==NULL，因为题目描述必定存在父节点
+        if (p->val > root->val && q->val > root->val) return lowestCommonAncestor(root->right, p, q);
+        if (q->val < root->val && p->val < root->val) return lowestCommonAncestor(root->left, p, q);
+        return root; // 等于的情况表示自己是自己的父节点
+    }
+};
+
+
+/**
+ * 236. 二叉树的最近公共祖先
+ * 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+ *
+ * 不是二叉搜索树了，不能再直接用值去求解了
+ * 考虑两种情况，一种是公共祖先为其中一个点，另一种是公共祖先为另外的点
+ */
+class Solution33 {
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        if (!root || root == p || root == q) return root; // 递归时遇到这两个点即返回
+        TreeNode *left = lowestCommonAncestor(root->left, p, q); // 左子树上的公共祖先
+        TreeNode *right = lowestCommonAncestor(root->right, p, q); // 右子树上的公共祖先
+        // 1.如果一个子树上不存在这两个点，即为NULL，则说明公共祖先如果存在一定是另一个子树上的公共祖先
+        // 2.如果两个子树上的公共祖先都存在，则说明各分支各一个目标节点
+        return !left ? right : !right ? left : root;
+    }
+};
+
+
+/**
+ * 108. 将有序数组转换为二叉搜索树
+ * 将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+ * 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+ *
+ * 二叉搜索树，高度平衡，排序数组，只需要将排序数组二分，依次写入二叉搜索树即可
+ */
+class Solution34 {
+public:
+    TreeNode *toBST(vector<int> &nums, int l, int r) {
+        if (l > r) return NULL;
+        int m = l + (r - l) / 2;
+        TreeNode *t = new TreeNode(nums[m]); // 为了高度平衡，将数组中间值写入二叉搜索树
+        t->left = toBST(nums, l, m - 1); // 对数组左边递归并设置二叉搜索树当前节点的左孩子
+        t->right = toBST(nums, m + 1, r);
+        return t;
+    }
+
+    TreeNode *sortedArrayToBST(vector<int> &nums) {
+        return toBST(nums, 0, nums.size() - 1);
+    }
+};
+
+
+/**
+ * 109. 有序链表转换二叉搜索树
+ *
+ * 给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+ * 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+ *
+ * 和上题思路一样，二分，这里用到了链表的二分，使用快慢指针
+ */
+class Solution35 {
+public:
+    TreeNode *sortedListToBST(ListNode *head) {
+        if (!head) return NULL;
+        if (!head->next) return new TreeNode(head->val); // 防止pre指针的next的next出错
+        ListNode *pre = getpre(head);
+        ListNode *mid = pre->next;
+        TreeNode *t = new TreeNode(mid->val);
+        pre->next = NULL; // 断开链表
+        ListNode *nt = mid->next;
+        t->left = sortedListToBST(head); // 和上题一样，分别处理左右两边
+        t->right = sortedListToBST(nt);
+        return t;
+    }
+
+    ListNode *getpre(ListNode *head) {
+        ListNode *slow = head, *fast = head->next, *pre = head; // 使用快慢指针找到链表的中间点
+        while (fast && fast->next) {
+            pre = slow; // 前指针用来记录中间点之前的值，方便二分之后左边界处理
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return pre;
+    }
+};
+
+
+/**
+ * 653. 两数之和 IV - 输入 BST
+ * 给定一个二叉搜索树和一个目标结果，如果 BST 中存在两个元素且它们的和等于给定的目标结果，则返回 true。
+ *
+ * 先用中序遍历获得升序列表，然后用双指针找目标值
+ */
+class Solution36 {
+public:
+
+    void fun(TreeNode *root, vector<int> &nums) {
+        if (!root) return;
+        fun(root->left, nums);
+        nums.emplace_back(root->val);
+        fun(root->right, nums);
+    }
+
+    bool findTarget(TreeNode *root, int k) {
+        vector<int> nums;
+        fun(root, nums); // 先中序遍历
+        int i = 0, j = nums.size() - 1;
+        while (i < j) { // 双指针找值
+            int t = nums[i] + nums[j];
+            if (t == k) return true;
+            else if (t < k) i++;
+            else j--;
+        }
+        return false;
+    }
+};
+
+
+/**
+ * 530. 二叉搜索树的最小绝对差
+ * 给你一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。
+ *
+ * 利用二叉搜索树中序遍历的有序性来处理
+ */
+class Solution37 {
+public:
+    int pre_val = -1;
+    int ans = INT32_MAX;
+
+    void fun(TreeNode *root) {
+        if (!root) return;
+        fun(root->left);
+        if (pre_val < 0) pre_val = root->val; // 记录中序遍历的上一个节点
+        else {
+            ans = min(root->val - pre_val, ans); // 在中序遍历过程中得到结果
+            pre_val = root->val;
+        }
+        fun(root->right);
+    }
+
+    int getMinimumDifference(TreeNode *root) {
+        fun(root);
+        return ans;
+    }
+};
+
+/**
+ * 501. 二叉搜索树中的众数
+ * 给定一个有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）。
+ *
+ * 考虑到二叉搜索树的中序遍历是有序的，对中序遍历结果求众数即可，求众数可以通过一次遍历记录众数结果列表nums，当前重复次数curcnt和最大重复次数maxcnt来计算
+ */
+class Solution38 {
+public:
+    int maxcnt = 0;
+    int curcnt = 0;
+    TreeNode *prev = NULL; // 记录节点而不是int值，防止初始化重复
+
+    void fun(TreeNode *root, vector<int> &nums) {
+        if (!root) return;
+
+        fun(root->left, nums);
+        if (!prev || prev->val == root->val) {
+            prev = root;
+            curcnt++; // 增加重复次数
+        }
+        else {
+            prev = root;
+            curcnt = 1; // 新值，重新计算重复次数
+        }
+
+        if (curcnt > maxcnt) { // 更大的众数
+            maxcnt = curcnt;
+            nums.clear(); // 清空众数结果列表
+            nums.emplace_back(root->val);
+        } else if (curcnt == maxcnt) { // 相同重复次数的众数
+            nums.emplace_back(root->val);
+        }
+        fun(root->right, nums);
+    }
+
+    vector<int> findMode(TreeNode *root) {
+        vector<int> ans;
+        fun(root, ans);
+        return ans;
     }
 };

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <set>
 
 using namespace std;
 
@@ -48,10 +49,10 @@ public:
  */
 class Solution2 {
 public:
-    ListNode* reverseList(ListNode* head) {
+    ListNode *reverseList(ListNode *head) {
         if (head == NULL || head->next == NULL) return head; // head==NULL用来判断链表为空，head->next==NULL用来判断结尾
         ListNode *next = head->next;
-        ListNode* newHead = reverseList(next);
+        ListNode *newHead = reverseList(next);
         head->next = NULL; // 用来保证最终结尾为NULL
         next->next = head; // 实际反转操作
         return newHead;
@@ -65,7 +66,7 @@ public:
  */
 class Solution3 {
 public:
-    ListNode* reverseList(ListNode* head) {
+    ListNode *reverseList(ListNode *head) {
         ListNode *cur = NULL, *pre = head; // 记录当前位置和下一个位置
         while (pre != NULL) {
             ListNode *t = pre->next; // 记录下下个位置
@@ -84,7 +85,7 @@ public:
  */
 class Solution4 {
 public:
-    ListNode* reverseList(ListNode* head) {
+    ListNode *reverseList(ListNode *head) {
         ListNode *newhead = new ListNode(-1); //建立伪头部节点
         while (head != NULL) {
             ListNode *t = head->next;
@@ -104,14 +105,13 @@ public:
  */
 class Solution5 {
 public:
-    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+    ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
         if (l1 == NULL) return l2; // 如果一个链表已经遍历完了，就取另一个链表的值
         if (l2 == NULL) return l1;
         if (l1->val < l2->val) { // 升序
             l1->next = mergeTwoLists(l1->next, l2); //l1->next为后续升序链表的头结点
             return l1;
-        }
-        else {
+        } else {
             l2->next = mergeTwoLists(l1, l2->next);
             return l2;
         }
@@ -125,15 +125,14 @@ public:
 class Solution6 {
 public:
     // 常规做法，遍历
-    ListNode* deleteDuplicates1(ListNode* head) {
+    ListNode *deleteDuplicates1(ListNode *head) {
         if (head == NULL) return head;
         ListNode *cur = head, *pre = head->next;
         while (pre != NULL) {
             if (cur->val == pre->val) {
                 cur->next = pre->next;
                 pre = pre->next;
-            }
-            else {
+            } else {
                 cur = cur->next;
                 pre = pre->next;
             }
@@ -142,7 +141,7 @@ public:
     }
 
     // 高级做法
-    ListNode* deleteDuplicates(ListNode* head) {
+    ListNode *deleteDuplicates(ListNode *head) {
         if (head == NULL || head->next == NULL) return head; // head == NULL 用来处理空链表，
         head->next = deleteDuplicates(head->next); // 当前节点的下一个节点为以下个节点开头的无重复链表
         return head->val == head->next->val ? head->next : head; // 如果当前节点与下个节点值相同，则跳过当前节点
@@ -155,9 +154,9 @@ public:
  */
 class Solution7 {
 public:
-    ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode *removeNthFromEnd(ListNode *head, int n) {
         ListNode *cur = head, *prev = head;
-        while(n-- > 0) // 先向前移动n个位置
+        while (n-- > 0) // 先向前移动n个位置
             prev = prev->next;
         if (prev == NULL) return head->next; // 如果prev==NULL，表示第一个节点需要舍弃
         while (prev->next != NULL) {
@@ -178,7 +177,7 @@ public:
  */
 class Solution8 {
 public:
-    ListNode* swapPairs(ListNode* head) {
+    ListNode *swapPairs(ListNode *head) {
         ListNode *dummyHead = new ListNode(-1);
         dummyHead->next = head; //加入伪节点，方便处理前置节点
         ListNode *pre = dummyHead;
@@ -202,7 +201,7 @@ public:
 class Solution9 {
 public:
     // 翻转链表
-    ListNode* fun(ListNode *head) {
+    ListNode *fun(ListNode *head) {
         ListNode *dm = new ListNode(-1);
         while (head != NULL) {
             ListNode *t = head->next;
@@ -213,7 +212,7 @@ public:
         return dm->next;
     }
 
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
         l1 = fun(l1);
         l2 = fun(l2);
         int k = 0; // 处理进位
@@ -228,7 +227,7 @@ public:
                 k += l2->val;
                 l2 = l2->next;
             }
-            head->next = new ListNode(k%10);
+            head->next = new ListNode(k % 10);
             k /= 10;
             head = head->next;
         }
@@ -251,20 +250,20 @@ public:
         return ans;
     }
 
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
         vector<int> v1 = buildStack(l1), v2 = buildStack(l2); // 堆栈可以用stack也可以用vector
         int k = 0;
         ListNode *dm = new ListNode(-1);
-        while (!v1.empty() || !v2.empty() || k>0) {
+        while (!v1.empty() || !v2.empty() || k > 0) {
             int t1 = v1.empty() ? 0 : v1.back(); // back可以直接取最后一个值，不需要v1[v1.size()-1]
             if (!v1.empty()) v1.pop_back();
             int t2 = v2.empty() ? 0 : v2.back();
             if (!v2.empty()) v2.pop_back();
 
-            ListNode* t = new ListNode((t1+t2+k) % 10);
+            ListNode *t = new ListNode((t1 + t2 + k) % 10);
             t->next = dm->next;
             dm->next = t;
-            k = (t1+t2+k) / 10;
+            k = (t1 + t2 + k) / 10;
         }
         return dm->next;
     }
@@ -278,7 +277,7 @@ public:
  */
 class Solution11 {
 public:
-    bool isPalindrome(ListNode* head) {
+    bool isPalindrome(ListNode *head) {
         if (!head || !head->next) return true;
         ListNode *slow = head, *fast = head->next; // 通过快慢指针找到数组中间点，即为fast指针为NULL时的slow指针
         while (fast && fast->next) {
@@ -320,7 +319,7 @@ public:
  */
 class Solution12 {
 public:
-    vector<ListNode*> splitListToParts(ListNode* root, int k) {
+    vector<ListNode *> splitListToParts(ListNode *root, int k) {
         ListNode *head = root;
         int N = 0; // 计算链表长度
         while (head) {
@@ -330,7 +329,7 @@ public:
 
         int size = N / k, mod = N % k;
         ListNode *cur = root;
-        vector<ListNode*> ans(k, NULL);
+        vector<ListNode *> ans(k, NULL);
 
         for (int i = 0; i < k; i++) {
             int cursize = size + ((mod--) > 0 ? 1 : 0);// 计算子部分的长度时先计算整除的值，然后依次对每个子部分叠加一个mod值，知道mod用完
@@ -354,7 +353,7 @@ public:
  */
 class Solution13 {
 public:
-    ListNode* oddEvenList(ListNode* head) {
+    ListNode *oddEvenList(ListNode *head) {
         int N = 0;
         ListNode *dm1 = new ListNode(-1);
         ListNode *dm2 = new ListNode(-1);
@@ -363,8 +362,7 @@ public:
             if (N % 2 == 0) {
                 l1->next = head;
                 l1 = l1->next;
-            }
-            else {
+            } else {
                 l2->next = head;
                 l2 = l2->next;
             }
@@ -385,7 +383,7 @@ public:
  */
 class Solution14 {
 public:
-    ListNode* oddEvenList(ListNode* head) {
+    ListNode *oddEvenList(ListNode *head) {
         if (!head) return head;
         ListNode *one = head, *two = head->next, *htwo = two; // 需要记录下偶数节点的起始节点
         while (two && two->next) {
@@ -396,5 +394,56 @@ public:
         }
         one->next = htwo; // 将奇数节点的最后一个链接到偶数节点的第一个
         return head;
+    }
+};
+
+
+/**
+ * 817. 链表组件
+ * 给定链表头结点 head，该链表上的每个结点都有一个 唯一的整型值 。
+ * 同时给定列表 G，该列表是上述链表中整型值的一个子集。
+ * 返回列表 G 中组件的个数，这里对组件的定义为：链表中一段最长连续结点的值（该值必须在列表 G 中）构成的集合。
+ *
+ * 思路是遍历head，判断每个节点是否存在与G中
+ * 麻烦的地方在于处理左右边界
+ */
+class Solution15 {
+public:
+
+    // 常用的处理边界方法：添加伪头节点
+    int numComponents(ListNode *head, vector<int> &G) {
+        set<int> st(G.begin(), G.end());
+        ListNode *dummy = new ListNode(-1); // 添加伪节点，使得起点的情况保持一直
+        dummy->next = head;
+        head = dummy;
+
+        int cnt = 0;
+        bool last_exist = false;
+        while (head) {
+            if (st.count(head->val) == 0) // 如果当前节点不在G中
+                last_exist = false;
+            else if (!last_exist) { // 如果当前节点存在G中，且上一个节点不在G中，则组数+1
+                cnt++;
+                last_exist = true;
+            }
+
+            head = head->next;
+        }
+        return cnt;
+    }
+
+    // 另一种常用的处理边界的方法，->next
+    int numComponents2(ListNode *head, vector<int> &G) {
+        set<int> st(G.begin(), G.end());
+
+        int cnt = 0;
+        while (head) {
+            // 如果当前节点在G中，但是下一个节点不在G中或者不存在下一个节点，则cnt+1
+            if (st.count(head->val) > 0 && (head->next == NULL || st.count(head->next->val) == 0))
+                cnt++;
+
+            head = head->next;
+        }
+        return cnt;
     }
 };

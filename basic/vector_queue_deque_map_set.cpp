@@ -10,6 +10,7 @@
 #include <deque>
 #include <unordered_map>
 #include <map>
+#include <set>
 
 using namespace std;
 
@@ -39,11 +40,30 @@ class Test {
         um.insert(make_pair('b', 2));
         for (auto iter = um.begin(); iter != um.end(); iter++) // 遍历操作
             cout << iter->first << " " << iter->second << endl;
+        cout << um.count('a') << endl;// 判断元素是否存在，存在 == 1， 不存在 == 0
 
-        map<char, int> m; // 普通字典，内部通过红黑树实现，所以是有序的，插入顺序和读取顺序一致
+
+        map<char, int> m = {{'a', 1},
+                            {'f', 2}}; // 普通字典，内部通过红黑树实现，所以是有序的，插入顺序和读取顺序一致
         m['a'] = 1; // 赋值操作，所有操作和无序字典一致
         m.insert(make_pair('b', 2));
         for (auto iter = m.begin(); iter != m.end(); iter++) // 遍历操作
             cout << iter->first << " " << iter->second << endl;
+        cout << m.count('a') << endl;// 判断元素是否存在，存在 == 1， 不存在 == 0
+        m['f']++;
+        m['f']++; // m['f'] = 2 不需要判断m['f']是否存在，直接++即可
+
+        set<int> st = {1, 2, 3};
+        st.emplace(5);
+        cout << st.count(1) << endl; // 判断元素是否存在
+        st.erase(st.begin()); // 删除元素，没有pop函数
+        for (auto iter = st.begin(); iter != st.end(); iter++)
+            cout << *iter << endl; // 遍历
+
+        // 优先级队列，常用来构建大小顶堆
+        priority_queue<int, vector<int>, greater<>> pq; // greater小顶堆， less大顶堆
+        pq.push(1); // 入堆
+        pq.pop(); // 出堆
+        pq.top(); // 堆顶元素
     }
 };

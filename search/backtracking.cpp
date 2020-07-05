@@ -94,7 +94,7 @@ public:
 
         for (int i = k + 1; i <= s.size(); i++) {
             int tmp = stoi(s.substr(k, i - k));
-            if (tmp > 255 || s.substr(k, i - k) != to_string(tmp))
+            if (tmp > 255 || s.substr(k, i - k) != to_string(tmp))// 002->2 != 002
                 break;
 
             prefix.emplace_back(to_string(tmp));
@@ -202,13 +202,13 @@ public:
 
     vector<vector<int>> ans;
 
-    void backtracking(vector<int> prefix, vector<int>& nums, vector<bool>& mem) {
+    void backtracking(vector<int> prefix, vector<int> &nums, vector<bool> &mem) {
         if (prefix.size() == nums.size()) {
             ans.emplace_back(prefix);
             return;
         }
 
-        for (int i = 0; i < nums.size(); i++) {
+        for (int i = 0; i < nums.size(); i++) { // 如果是遍历，而不是指定某几个值的话，适合使用这种，不需要取指定i，j
             if (!mem[i]) {
                 mem[i] = true;
                 prefix.emplace_back(nums[i]);
@@ -219,7 +219,7 @@ public:
         }
     }
 
-    vector<vector<int>> permute(vector<int>& nums) {
+    vector<vector<int>> permute(vector<int> &nums) {
         vector<bool> mem(nums.size(), false);
         backtracking(vector<int>(), nums, mem);
         return ans;
@@ -231,21 +231,21 @@ public:
  * 给定一个可包含重复数字的序列，返回所有不重复的全排列。
  *
  * 防止重复的方法是先排序，然后再每次递归的时候判断当前位置和前一个位置的值是否相同，如果相同则判断前一个值是否已经被使用，
- * 如果未使用，则当前位置的值不能使用，因为会和取上一个位置的值，但是不去当前位置的值的情况重复。
+ * 如果未使用，则当前位置的值不能使用，因为会和取上一个位置的值。
  */
 class Solution6 {
 public:
 
     vector<vector<int>> ans;
 
-    void backtracking(vector<int> prefix, vector<int>& nums, vector<bool>& mem) {
+    void backtracking(vector<int> prefix, vector<int> &nums, vector<bool> &mem) {
         if (prefix.size() == nums.size()) {
             ans.emplace_back(prefix);
             return;
         }
 
         for (int i = 0; i < nums.size(); i++) {
-            if (mem[i] || (i>0 && !mem[i-1] && nums[i] == nums[i-1]))
+            if (mem[i] || (i > 0 && !mem[i - 1] && nums[i] == nums[i - 1]))
                 continue;
 
             mem[i] = true;
@@ -256,7 +256,7 @@ public:
         }
     }
 
-    vector<vector<int>> permuteUnique(vector<int>& nums) {
+    vector<vector<int>> permuteUnique(vector<int> &nums) {
         sort(nums.begin(), nums.end());
         vector<bool> mem(nums.size(), false);
         backtracking(vector<int>(), nums, mem);
@@ -282,7 +282,7 @@ public:
 
         for (int i = t; i <= n; i++) {
             prefix.emplace_back(i);
-            backtracking(prefix, n, k, i+1);
+            backtracking(prefix, n, k, i + 1);
             prefix.pop_back();
         }
     }
@@ -308,7 +308,7 @@ public:
 
     vector<vector<int>> ans;
 
-    void backtracking(vector<int> prefix, vector<int>& candidates, int t, int k) {
+    void backtracking(vector<int> prefix, vector<int> &candidates, int t, int k) {
         if (t <= 0) {
             if (t == 0) ans.emplace_back(prefix);
             return;
@@ -316,12 +316,12 @@ public:
 
         for (int i = k; i < candidates.size(); i++) { // i=k，是为了不重复
             prefix.emplace_back(candidates[i]);
-            backtracking(prefix, candidates,t-candidates[i], i); // 由于可以重复取同一个值，所以这里是i，不是i+1
+            backtracking(prefix, candidates, t - candidates[i], i); // 由于可以重复取同一个值，所以这里是i，不是i+1
             prefix.pop_back();
         }
     }
 
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+    vector<vector<int>> combinationSum(vector<int> &candidates, int target) {
         sort(candidates.begin(), candidates.end());
         backtracking(vector<int>(), candidates, target, 0);
         return ans;
@@ -339,29 +339,29 @@ class Solution9 {
 public:
     vector<vector<int>> ans;
 
-    void backtracking(vector<int> prefix, vector<bool> visited, vector<int>& candidates, int target, int k) {
+    void backtracking(vector<int> prefix, vector<bool> visited, vector<int> &candidates, int target, int k) {
         if (target == 0) {
             ans.emplace_back(prefix);
             return;
         }
 
         for (int i = k; i < candidates.size(); i++) {
-            if (i > 0 && candidates[i] == candidates[i-1] && !visited[i-1])
+            if (i > 0 && candidates[i] == candidates[i - 1] && !visited[i - 1])
                 continue; // 典型的去除重复方法，排序+visited+前后判断
 
             if (target - candidates[i] >= 0) { // 将一部分终止条件放到了循环中，减少递归次数
                 prefix.emplace_back(candidates[i]);
                 visited[i] = true;
-                backtracking(prefix, visited, candidates, target-candidates[i], i+1); // i+1保证每个数字只取一次
+                backtracking(prefix, visited, candidates, target - candidates[i], i + 1); // i+1保证每个数字只取一次
                 visited[i] = false;
                 prefix.pop_back();
             }
         }
     }
 
-    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+    vector<vector<int>> combinationSum2(vector<int> &candidates, int target) {
         sort(candidates.begin(), candidates.end());
-        backtracking(vector<int>(), vector<bool>(candidates.size(), false), candidates ,target, 0);
+        backtracking(vector<int>(), vector<bool>(candidates.size(), false), candidates, target, 0);
         return ans;
     }
 };
@@ -384,8 +384,8 @@ public:
         if (k < 0 || n < 0) return;
 
         for (int i = t; i < 10; i++) {
-            prefix.emplace_back(i); // backtracking的push经常是在for循环里面
-            backtracking(prefix, k-1, n-i, i+1);
+            prefix.emplace_back(i); // backtracking的push经常是在for循环里面，这是由于经常需要遍历
+            backtracking(prefix, k - 1, n - i, i + 1);
             prefix.pop_back();
         }
     }
@@ -410,12 +410,12 @@ public:
 
         for (int i = k; i < nums.size(); i++) {
             prefix.emplace_back(nums[i]);
-            backtracking(prefix, nums, i+1);
+            backtracking(prefix, nums, i + 1);
             prefix.pop_back();
         }
     }
 
-    vector<vector<int>> subsets(vector<int>& nums) {
+    vector<vector<int>> subsets(vector<int> &nums) {
         backtracking(vector<int>(), nums, 0);
         return ans;
     }
@@ -434,17 +434,17 @@ public:
         ans.emplace_back(prefix);
 
         for (int i = k; i < nums.size(); i++) {
-            if (i > 0 && nums[i] == nums[i-1] && !visited[i-1]) continue;
+            if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) continue;
 
             prefix.emplace_back(nums[i]);
             visited[i] = true;
-            backtracking(prefix, visited, nums, i+1);
+            backtracking(prefix, visited, nums, i + 1);
             visited[i] = false;
             prefix.pop_back();
         }
     }
 
-    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+    vector<vector<int>> subsetsWithDup(vector<int> &nums) {
         sort(nums.begin(), nums.end());
         backtracking(vector<int>(), vector<bool>(nums.size(), false), nums, 0);
         return ans;
@@ -459,6 +459,7 @@ public:
 class Solution13 {
 public:
     vector<vector<string>> ans;
+
     bool fun(string s, int start, int end) {
         while (start < end) // 双指针的快速写法
             if (s[start++] != s[end--])
@@ -474,8 +475,8 @@ public:
 
         for (int i = k; i < s.size(); i++) {
             if (!fun(s, k, i)) continue;
-            prefix.emplace_back(s.substr(k, i-k+1));
-            backtracking(prefix, s, i+1);
+            prefix.emplace_back(s.substr(k, i - k + 1));
+            backtracking(prefix, s, i + 1);
             prefix.pop_back();
         }
     }
@@ -514,8 +515,8 @@ public:
 
         // 不使用双层for循环遍历，而是使用while循环来查找下一个位置，有效降低时间开销
         while (r < R && board[r][c] != '.') {
-            r = c == C-1 ? r+1 : r;
-            c = c == C-1 ? 0: c+1;
+            r = c == C - 1 ? r + 1 : r;
+            c = c == C - 1 ? 0 : c + 1;
         }
         if (r == R) return true;
 
@@ -524,7 +525,7 @@ public:
             if (rowused[r][k] || colused[c][k] || cubeused[cubenum(r, c)][k]) continue;
 
             rowused[r][k] = colused[c][k] = cubeused[cubenum(r, c)][k] = true;
-            board[r][c] = '0'+k;
+            board[r][c] = '0' + k;
             if (backtracking(board, r, c)) return true;
             board[r][c] = '.';
             rowused[r][k] = colused[c][k] = cubeused[cubenum(r, c)][k] = false;
@@ -533,7 +534,7 @@ public:
         return false;
     }
 
-    void solveSudoku(vector<vector<char>>& board) {
+    void solveSudoku(vector<vector<char>> &board) {
         for (int i = 0; i < R; i++)
             for (int j = 0; j < C; j++) {
                 if (board[i][j] == '.') continue;
@@ -566,21 +567,21 @@ public:
         }
 
         for (int j = 0; j < n; j++) {
-            int q135id = n-1-(row-j);
-            if (colused[j] || q45used[row+j] || q135used[q135id]) continue;
+            int q135id = n - 1 - (row - j);
+            if (colused[j] || q45used[row + j] || q135used[q135id]) continue;
 
-            colused[j] = q45used[row+j] = q135used[q135id] = true;
+            colused[j] = q45used[row + j] = q135used[q135id] = true;
             qq[row][j] = 'Q';
-            backtracking(n, qq, row+1);
+            backtracking(n, qq, row + 1);
             qq[row][j] = '.';
-            colused[j] = q45used[row+j] = q135used[q135id] = false;
+            colused[j] = q45used[row + j] = q135used[q135id] = false;
         }
     }
 
     vector<vector<string>> solveNQueens(int n) {
         colused = vector<bool>(n, false);
-        q45used = vector<bool>(2*n-1, false);
-        q135used = vector<bool>(2*n-1, false);
+        q45used = vector<bool>(2 * n - 1, false);
+        q135used = vector<bool>(2 * n - 1, false);
         backtracking(n, vector<string>(n, string(n, '.')), 0);
         return ans;
     }

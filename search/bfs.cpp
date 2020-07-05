@@ -29,7 +29,7 @@ public:
 
     int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
         int R = grid.size(), C = grid[0].size();
-        deque<pair<int, int>> mm;
+        deque<pair<int, int>> mm; // 可以使用queue来实现先进先出队列，更简单
         if (grid[0][0] <= 0)
             mm.emplace_back(make_pair(0,0));
         int cnt = 0;
