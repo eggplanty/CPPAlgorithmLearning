@@ -11,11 +11,13 @@
 #include <algorithm>
 #include <assert.h>
 #include <set>
+#include <list>
+
 
 using namespace std;
 
 int main() {
-    queue<pair<int, int>> mm;
-    mm.push({0, 0});
-    mm.
+    list<int> a = {1,2,3};
+    cout << a.back() << endl;
 }
+

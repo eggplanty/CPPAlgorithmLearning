@@ -41,11 +41,11 @@ public:
  */
 class Solution2 {
 public:
-    char nextGreatestLetter(vector<char>& letters, char target) {
+    char nextGreatestLetter(vector<char> &letters, char target) {
         int l = 0, r = letters.size(); // 初始r设为size()时，如果不存在，则l=size()
         char ans = letters[0];
         while (l < r) {
-            int m = l + (r-l) / 2;
+            int m = l + (r - l) / 2;
             if (letters[m] > target)
                 r = m;
             else // <= 时，while循环的条件不能有=
@@ -61,13 +61,13 @@ public:
  */
 class Solution3 {
 public:
-    int singleNonDuplicate(vector<int>& nums) {
-        int i = 0, j = nums.size()-1; // 这里必须时size()-1，否则会越界
+    int singleNonDuplicate(vector<int> &nums) {
+        int i = 0, j = nums.size() - 1; // 这里必须时size()-1，否则会越界
         while (i < j) {
             int m = i + (j - i) / 2;
-            m = m % 2 == 1 ? m-1 : m; // 统一成双数处理
-            if (nums[m] == nums[m+1]) // 判断前后两个值是否相同
-                i = m+2;
+            m = m % 2 == 1 ? m - 1 : m; // 统一成双数处理
+            if (nums[m] == nums[m + 1]) // 判断前后两个值是否相同
+                i = m + 2;
             else
                 j = m;
         }
@@ -87,6 +87,7 @@ public:
     bool isBadVersion(int a) {
         return a > 0;
     }
+
     int firstBadVersion(int n) {
         int i = 0, j = n;
         while (i < j) { // 由于j=m，这里就不能再取=了，否则会死循环
@@ -94,7 +95,7 @@ public:
             if (isBadVersion(m))
                 j = m; // 错误的版本有可能是第一个
             else
-                i = m+1;
+                i = m + 1;
         }
         return i;
     }
@@ -108,12 +109,12 @@ public:
  */
 class Solution5 {
 public:
-    int findMin(vector<int>& nums) {
-        int i = 0, j = nums.size()-1;
+    int findMin(vector<int> &nums) {
+        int i = 0, j = nums.size() - 1;
         while (i < j) {
             int m = i + (j - i) / 2;
             if (nums[m] > nums[j]) // 与右边的值做比较来判断在旋转点前后
-                i = m+1;
+                i = m + 1;
             else
                 j = m;
         }
@@ -142,11 +143,30 @@ public:
         return i; // 返回目标值对应的位置，若没有，则返回它应存在的下一个位置
     }
 
-    vector<int> searchRange(vector<int>& nums, int target) {
+    vector<int> searchRange(vector<int> &nums, int target) {
         int st = getPos(nums, target);
         int ed = getPos(nums, target + 1) - 1;
         if (st == nums.size() || nums[st] != target)
             return {-1, -1};
         return {st, ed};
+    }
+};
+
+
+/**
+ * 剑指 Offer 11. 旋转数组的最小数字
+ * 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。  
+ */
+class Solution7 {
+public:
+    int minArray(vector<int> &numbers) {
+        int i = 0, j = numbers.size() - 1;
+        while (i < j) {
+            int m = i + (j - i) / 2;
+            if (numbers[m] > numbers[j]) i = m + 1;
+            else if (numbers[m] < numbers[j]) j = m; // 小于时该位置也可能时最小值
+            else j -= 1; // 不能是i+=1，那样会错过1,3,3的1，也就是有序序列的最小值
+        }
+        return numbers[i];
     }
 };

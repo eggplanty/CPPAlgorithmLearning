@@ -13,7 +13,7 @@ using namespace std;
  */
 class Solution {
 public:
-    int findContentChildren(vector<int>& g, vector<int>& s) {
+    int findContentChildren(vector<int> &g, vector<int> &s) {
         sort(g.begin(), g.end());
         sort(s.begin(), s.end());
 
@@ -35,10 +35,10 @@ public:
  */
 class Solution2 {
 public:
-    int maxProfit(vector<int>& prices) {
+    int maxProfit(vector<int> &prices) {
         int mins = INT16_MAX, mm = 0;
         for (auto &p : prices) {
-            mm = max(mm, p-mins);
+            mm = max(mm, p - mins);
             mins = min(mins, p);
         }
         return mm;
@@ -52,11 +52,11 @@ public:
  */
 class Solution3 {
 public:
-    bool canPlaceFlowers(vector<int>& flowerbed, int n) {
+    bool canPlaceFlowers(vector<int> &flowerbed, int n) {
         int cnt = 0;
         for (int i = 0; i < flowerbed.size(); i++) {
-            int l = (i-1 >= 0) ? i-1 : 0;
-            int r = (i+1 < flowerbed.size()) ? i+1 : flowerbed.size()-1;
+            int l = (i - 1 >= 0) ? i - 1 : 0;
+            int r = (i + 1 < flowerbed.size()) ? i + 1 : flowerbed.size() - 1;
             if (flowerbed[i] == 0 && flowerbed[l] == 0 && flowerbed[r] == 0)
                 cnt++, flowerbed[i] = 1;
         }
@@ -71,7 +71,7 @@ public:
  */
 class Solution4 {
 public:
-    int maxSubArray(vector<int>& nums) {
+    int maxSubArray(vector<int> &nums) {
         int ss = nums[0], mm = nums[0]; // 使用[0]的值做初始化
         for (int i = 1; i < nums.size(); i++) {
             ss = ss > 0 ? ss + nums[i] : nums[i];
@@ -104,5 +104,41 @@ public:
             }
         }
         return ans;
+    }
+};
+
+
+/**
+ * 剑指 Offer 14- II. 剪绳子 II
+ * 给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 k[0],k[1]...k[m - 1] 。请问 k[0]*k[1]*...*k[m - 1] 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+ * 答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+ *
+ * 这里不能用dp，不然取模结果不确定
+ */
+class Solution6 {
+public:
+    int M = 1e9 + 7;
+
+    inline long fun(int x, int a, int m) { // 这里需要用long，不能用int，因为掉完函数之后还要取一次模
+        long rem = 1; // 这里必须用long， 不然(rem%m)*x 可能会超
+        while (a-- > 0)
+            rem = ((rem % m) * x) % m;
+        return rem;
+    }
+
+    int cuttingRope(int n) {
+        if (n == 2) return 1;
+        if (n == 3) return 2;
+        if (n == 4) return 4;
+        if (n == 5) return 6;
+
+        int a = n / 3;
+        int b = n % 3;
+        if (b == 0)
+            return fun(3, a, M);
+        else if (b == 1)
+            return fun(3, a - 1, M) * 4 % M; // 这里fun得到的是long，不然*4会可能会超
+        else
+            return fun(3, a, M) * 2 % M;
     }
 };

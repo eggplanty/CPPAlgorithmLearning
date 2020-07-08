@@ -368,8 +368,8 @@ public:
         int right = fun(root->right);
         int pl = root->left && root->val == root->left->val ? left + 1 : 0; // 当是叶子节点时，为0，这导致返回值由同值点数变成了同值点数-1
         int pr = root->right && root->val == root->right->val ? right + 1 : 0;
-        ans = max(ans, pl + pr); // 左右同值边数相加之和
-        return max(pl, pr); // 左右最大同值边数
+        ans = max(ans, pl + pr); // 左右同值边数相加之和，可以是横向路径
+        return max(pl, pr); // 左右最大同值边数，返回值是从某个节点到叶子节点的从上到下路径
     }
 
     int longestUnivaluePath(TreeNode *root) {
@@ -679,6 +679,7 @@ public:
 
 /**
  * 669. 修剪二叉搜索树
+ * 给定一个二叉搜索树，同时给定最小边界L 和最大边界 R。通过修剪二叉搜索树，使得所有节点的值在[L, R]中 (R>=L) 。你可能需要改变树的根节点，所以结果应当返回修剪好的二叉搜索树的新的根节点。
  */
 class Solution28 {
 public:
@@ -938,8 +939,7 @@ public:
         if (!prev || prev->val == root->val) {
             prev = root;
             curcnt++; // 增加重复次数
-        }
-        else {
+        } else {
             prev = root;
             curcnt = 1; // 新值，重新计算重复次数
         }
