@@ -960,3 +960,57 @@ public:
         return ans;
     }
 };
+
+
+/**
+ * 剑指 Offer 33. 二叉搜索树的后序遍历序列
+ * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+ *
+ * 转化为子问题，用分治法做
+ */
+class Solution39 {
+public:
+
+    bool recur(vector<int> &nums, int i, int j) {
+        if (i >= j) return true;
+        int root = nums[j];
+        int m = 0;
+        while (nums[m] < root) m++; // i->m-1为左子树
+        int k = m; // 判断m->j-1是否都大于root
+        while (nums[k] > root) k++;
+        if (k != j) return false;
+        return recur(nums, i, m - 1) && recur(nums, m, j - 1);
+    }
+
+    bool verifyPostorder(vector<int> &postorder) {
+        // 左子树 | 右子树 | 根
+        if (postorder.size() == 0) return true;
+        int i = 0, j = postorder.size() - 1;
+        return recur(postorder, i, j);
+    }
+};
+
+
+/**
+ * 剑指 Offer 54. 二叉搜索树的第k大节点
+ * 给定一棵二叉搜索树，请找出其中第k大的节点。
+ */
+class Solution40 {
+public:
+    int val = 0;
+    void fun(TreeNode *node, int &k) {
+        if (!node) return;
+        fun(node->right, k); // 右节点 | 根节点 | 左节点，相当于逆序
+        k--;
+        if (k==0) {
+            val = node->val;
+            return;
+        }
+        fun(node->left, k);
+    }
+
+    int kthLargest(TreeNode* root, int k) {
+        fun(root, k);
+        return val;
+    }
+};

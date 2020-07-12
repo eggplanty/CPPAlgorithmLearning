@@ -9,6 +9,7 @@
 #include <queue>
 #include <vector>
 #include <set>
+#include <math.h>
 
 using namespace std;
 
@@ -312,7 +313,7 @@ public:
  *
  * dp的思路比较简单
  * dp[i] = 组成整数i的最小完全平方数个数
- * 显然，i可以拆成一个完全平方数k和i-j
+ * 显然，i可以拆成一个完全平方数k和i-k
  * 所以 dp[i] = min{dp[i-k] + 1}   k = 1,4,9 ...
  * 每次遍历完全平方数即可求解各个i，最后求最小值即可
  */
@@ -1187,5 +1188,90 @@ public:
         for (int i = 2; i < n; ++i)
             if (n % i == 0) return minSteps(n / i) + i; // 这里由于i从小到大，所以显然n/i要大于i，所以minStep(n/i)
         return n;
+    }
+};
+
+
+/**
+ * 剑指 Offer 48. 最长不含重复字符的子字符串
+ * 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+ *
+ * dp结合哈希表
+ */
+class Solution32 {
+public:
+    int lengthOfLongestSubstring(string s) {
+        // dp[i] = 以i结尾的最长子序列的长度
+        // dp[i] = dp[i-1] + 1    if dp[i-1] < i-j    ,s[i] == s[j]，j为上一个与s[i]相等的位置
+        //       = i-j            if dp[i-1] >= i-j
+        // 如何快速求i？如何快速求与当前坐标值相同的上一个值的坐标?
+        // 哈希表记录最后一个相同值的坐标
+
+        vector<int> mp(256, -1);
+        vector<int> dp(s.size()+1, 0);
+        int maxlen = 0;
+        for (int i = 1; i <= s.size(); ++i) {
+            int idx = mp[s[i-1]];
+            if (dp[i-1] < i-1-idx)
+                dp[i] = dp[i-1] + 1;
+            else
+                dp[i] = i-1-idx;
+
+            mp[s[i-1]] = i-1;
+            maxlen = max(maxlen, dp[i]);
+        }
+        return maxlen;
+    }
+};
+
+
+/**
+ * 剑指 Offer 49. 丑数
+ * 我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+ */
+class Solution33 {
+public:
+    int nthUglyNumber(int n) {
+        // dp[i] = 第i个丑数
+        // dp[i] = min{dp[a]*2, dp[b]*3, dp[c]*5}, 为了使丑数最小，要求dp[a,b,c]为第一组*235后大于dp[i-1]的abc
+        vector<int> dp(n+1, 0);
+        int a = 1, b = 1, c = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            dp[i] = min(dp[a]*2, min(dp[b]*3, dp[c]*5));
+            if (dp[i] == dp[a]*2) a++;
+            if (dp[i] == dp[b]*3) b++; // 由于dp[i] 可能同时等于多个，所以这里不能用else
+            if (dp[i] == dp[c]*5) c++;
+        }
+        return dp[n];
+    }
+};
+
+
+/**
+ * 剑指 Offer 60. n个骰子的点数
+ * 把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。
+ * 你需要用一个浮点数数组返回答案，其中第 i 个元素代表这 n 个骰子所能掷出的点数集合中第 i 小的那个的概率。
+ *
+ * 计算n个色子投出的各个点数的可能数 / 总可能数
+ */
+class Solution34 {
+public:
+    vector<double> twoSum(int n) {
+        // dp[i][j] = 投掷i个色子，点数为j的可能数
+        // dp[i][j] += dp[i-1][j-k]    k=1,2,3,...min(j-1, 6) 一个色子的点数不可能超过6
+
+        vector<vector<int>> dp(n+1, vector<int>(70, 0));
+        for (int i = 1; i <= 6; ++i) dp[1][i] = 1;
+
+        for (int i = 2; i <= n; ++i)
+            for (int j = i; j <= 6*i; ++j)
+                for (int k = 1; k <= 6 && j>k; ++k) // 这里k表示第i个色子可能投出的点数
+                    dp[i][j] += dp[i-1][j-k];
+
+        vector<double> ans;
+        for (int j = 1*n; j <= 6*n; j++)
+            ans.push_back(double(dp[n][j]) / pow(6,n));
+        return ans;
     }
 };

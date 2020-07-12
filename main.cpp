@@ -12,12 +12,13 @@
 #include <assert.h>
 #include <set>
 #include <list>
-
+#include <sstream>
+#include "basic/sort7.h"
 
 using namespace std;
 
+
 int main() {
-    list<int> a = {1,2,3};
-    cout << a.back() << endl;
+    Test().run();
 }
 

@@ -249,3 +249,27 @@ public:
         return ans;
     }
 };
+
+
+/**
+ *
+ */
+class Solution10 {
+public:
+    vector<vector<int>> findContinuousSequence(int target) {
+        vector<vector<int>>ans;
+        vector<int> tmp;
+        for (int i=1, j=2; i < j;) {
+            int sum = (i+j) * (j-i+1) / 2;
+            if (sum == target) {
+                tmp.clear();
+                for (int k = i; k <= j; ++k) tmp.push_back(k);
+                ans.push_back(tmp);
+                ++i;
+            }
+            else if (sum > target) ++i;
+            else ++j;
+        }
+        return ans;
+    }
+};

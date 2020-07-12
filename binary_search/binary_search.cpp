@@ -170,3 +170,24 @@ public:
         return numbers[i];
     }
 };
+
+
+/**
+ * 剑指 Offer 16. 数值的整数次方
+ * 实现函数double Power(double base, int exponent)，求base的exponent次方。不得使用库函数，同时不需要考虑大数问题。
+ */
+class Solution8 {
+public:
+    double myPow(double x, int n) {
+        if (x == 0) return 0; // 防止n<0时1/x出错
+        long ln = n;
+        if (ln < 0) x = 1/x, ln = -ln; // n有可能为INT32_MAX，取负数超出下界
+        double res = 1.0;
+        while (ln) {
+            if (ln&1) res*=x; // 必然会走到n==1，将之间没乘的x一次乘完
+            x*=x;
+            ln/=2;
+        }
+        return res;
+    }
+};

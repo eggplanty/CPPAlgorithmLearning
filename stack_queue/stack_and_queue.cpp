@@ -249,3 +249,79 @@ public:
         return ans;
     }
 };
+
+
+/**
+ * 剑指 Offer 59 - I. 滑动窗口的最大值
+ * 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+ *
+ * 与最小栈类似，不过这里使用非严格递减的双端队列来实现，缓存最小和次小值等，从而实现搜索滑动窗口最小值O(1)复杂度
+ * 单调双端队列基于问题的一个重要性质：当一个元素进入队列的时候，它前面所有比它小的元素就不会再对答案产生影响
+ */
+class Solution4 {
+public:
+    vector<int> maxSlidingWindow(vector<int> &nums, int k) {
+        vector<int> v;
+        deque<int> q; // 双端队列
+
+        for (int i = 0; i < k; ++i) { // 未构成滑动窗口
+            while (!q.empty() && q.back() < nums[i])
+                q.pop_back();
+            q.push_back(nums[i]);
+        }
+
+        if (!q.empty())
+            v.push_back(q[0]); // 0->k-1的最大值，即第一个窗口的最大值
+
+        for (int i = k; i < nums.size(); ++i) {
+            if (q[0] == nums[i - k]) q.pop_front(); // 弹出左值
+            while (!q.empty() && q.back() < nums[i]) q.pop_back();
+            q.push_back(nums[i]); // 添加右值
+            v.push_back(q[0]);
+        }
+
+        return v;
+    }
+};
+
+
+/**
+ * 剑指 Offer 59 - II. 队列的最大值
+ * 请定义一个队列并实现函数 max_value 得到队列里的最大值，要求函数max_value、push_back 和 pop_front 的均摊时间复杂度都是O(1)。
+ * 若队列为空，pop_front 和 max_value 需要返回 -1
+ *
+ * 典型的双端单调队列
+ * 单调双端队列基于问题的一个重要性质：当一个元素进入队列的时候，它前面所有比它小的元素就不会再对答案产生影响
+ */
+class MaxQueue {
+public:
+    deque<int> d;
+    queue<int> q;
+
+    MaxQueue() {
+
+    }
+
+    int max_value() {
+        if (q.empty())
+            return -1;
+        return d.front();
+    }
+
+    void push_back(int value) {
+        while(!d.empty() && d.back() < value) d.pop_back();
+        d.push_back(value);
+        q.push(value);
+    }
+
+    int pop_front() {
+        if (q.empty())
+            return -1;
+
+        int ans = q.front();
+        if (d.front() == ans) // 当最大值就是目标值是才弹出
+            d.pop_front();
+        q.pop();
+        return ans;
+    }
+};

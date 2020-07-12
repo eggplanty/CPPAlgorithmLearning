@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <map>
+#include <set>
 
 using namespace std;
 
@@ -394,5 +396,137 @@ public:
                 s2 = n;
         }
         return max(m1*m2*m3, s1*s2*m1);
+    }
+};
+
+
+/**
+ * 剑指 Offer 20. 表示数值的字符串
+ * 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串"+100"、"5e2"、"-123"、"3.1416"、"0123"都表示数值，但"12e"、"1a3.14"、"1.2.3"、"+-5"、"-1E-16"及"12e+5.4"都不是。
+ *
+ * 典型的有限状态机题
+ */
+class Solution17 {
+public:
+
+    bool isNumber(string s) {
+        vector<map<char, int>> vm = {
+                {{'b', 0}, {'s', 1}, {'d', 2}, {'.', 4}},
+                {{'.', 4}, {'d', 2}},
+                {{'d', 2}, {'.', 3}, {'b', 8}, {'e', 5}},
+                {{'d', 3}, {'e', 5}, {'b', 8}},
+                {{'d', 3}},
+                {{'s', 6}, {'d', 7}},
+                {{'d', 7}},
+                {{'d', 7}, {'b', 8}},
+                {{'b', 8}}
+        };
+        set<int> st = {2,3,7,8};
+        int p = 0;
+        for (auto c: s) {
+            char k;
+            if (c >= '0' && c <= '9') k = 'd';
+            else if (c==' ') k = 'b';
+            else if (c == '.') k = '.';
+            else if (c == 'e') k = 'e';
+            else if (c == '+' || c== '-') k = 's';
+            else return false;
+            if (vm[p].count(k) <= 0) return false;
+            p = vm[p][k];
+        }
+        return st.count(p) > 0;
+    }
+};
+
+
+/**
+ * 剑指 Offer 43. 1～n整数中1出现的次数
+ * 输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+ * 例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+ *
+ * 这是一道找规律的题
+ * 将数据按照cur位置分成high和low两部分，进而计算cur==1时的数量
+ */
+class Solution18 {
+public:
+    int countDigitOne(int n) {
+        long high = n / 10, cur = n % 10, low = 0, digital = 1, res = 0;
+        while (high != 0 || cur != 0) {  // 当 high 和 cur 同时为 0 时，说明已经越过最高位，因此跳出
+            if (cur == 0) res += high * digital;  //
+            else if (cur == 1) res += high *digital + low + 1;
+            else res += (high+1) * digital;
+            low += cur * digital; // 将 cur 加入 low ，组成下轮 low
+            cur = high % 10; // 下轮 cur 是本轮 high 的最低位
+            high = high/10; // 将本轮 high 最低位删除，得到下轮 high
+            digital *= 10; // 位因子每轮 × 10
+        }
+        return res;
+    }
+};
+
+
+/**
+ * 剑指 Offer 44. 数字序列中某一位的数字
+ * 数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+ * 请写一个函数，求任意第n位对应的数字。
+ *
+ * 还是找规律题，
+ * 先确定第n为属于哪个数值范围，然后确定属于哪个数值，最后确定属于那位数
+ */
+class Solution19 {
+public:
+    int findNthDigit(int n) {
+        long start = 1, digit = 1, count = 9;
+        while (n > count) { // 说明n在该数位的数值范围内
+            n = n - count;
+            digit++;
+            start*=10;
+            count = 9*start*digit;
+        }
+        int num = start+(n-1)/digit; // 确定属于该数值范围内的某个数字
+        return to_string(num)[(n-1)%digit] - '0';// 确定属于该数字的位数
+    }
+};
+
+
+/**
+ * 剑指 Offer 62. 圆圈中最后剩下的数字
+ * 0,1,,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字。求出这个圆圈里剩下的最后一个数字。
+ * 例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+ *
+ * 约瑟夫环问题
+ * https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/solution/javajie-jue-yue-se-fu-huan-wen-ti-gao-su-ni-wei-sh/
+ */
+class Solution20 {
+public:
+    int lastRemaining(int n, int m) {
+        int ans = 0;
+        for (int i = 2;i <= n; ++i)
+            ans = (ans+m) % i;
+        return ans;
+    }
+};
+
+
+/**
+ * 剑指 Offer 66. 构建乘积数组
+ * 给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B 中的元素 B[i]=A[0]×A[1]×…×A[i-1]×A[i+1]×…×A[n-1]。不能使用除法。
+ *
+ * 从上下三角矩阵的角度来考虑
+ */
+class Solution21 {
+public:
+    vector<int> constructArr(vector<int>& a) {
+        int n = a.size();
+        vector<int> dp(n, 1);
+        for(int i = 1; i < n; ++i)
+            dp[i] = dp[i-1]*a[i-1];
+
+        int tmp = 1;
+        for (int i = n-2; i >= 0; --i) {
+            tmp *= a[i+1];
+            dp[i] *= tmp;
+        }
+        return dp;
     }
 };

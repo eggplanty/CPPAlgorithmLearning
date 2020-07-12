@@ -8,31 +8,44 @@
 #include <vector>
 #include <deque>
 #include <queue>
+#include "sort7.h"
 
 using namespace std;
 
-//TODO: 验证正确性
-
-// 选择排序
-class SelectSort {
+/**
+ * 选择排序
+ * 每次交换最小的元素，排列成排序队列
+ * 时间复杂度 O(n^2)
+ * 不稳定
+ */
+class SelectSort : public MySort {
 public:
     void sort(vector<int> &q) {
-        for (int i = 0; i < q.size() - 1; i++)
-            for (int j = 0; j < q.size(); j++)
-                if (q[i] < q[j])
+        int n = q.size();
+        for (int i = 0; i < (n - 1); i++)
+            for (int j = i; j < n; j++)
+                if (q[j] < q[i])
                     swap(q[i], q[j]);
     }
 };
 
-// 冒泡排序
-class BubbleSort {
+/**
+ * 每个元素从头向尾冒泡，直到序列不在发生交换
+ * 时间复杂度 最好 O(n) 有序，直接退出
+ *           最坏 O(n^2)
+ *           平均 O(n^2)
+ * 稳定性：稳定
+ * 适用情况：少量数据
+ */
+class BubbleSort : public MySort {
 public:
     void sort(vector<int> &q) {
-        for (int i = q.size() - 1; i > 0; i--) {
+        int n = q.size();
+        for (int i = n - 1; i > 0; i--) {
             int is_sorted = true;
 
             for (int j = 0; j < i; j++)
-                if (q[j] < q[j + 1]) {
+                if (q[j] > q[j + 1]) {
                     swap(q[j], q[j + 1]);
                     is_sorted = false;
                 }
@@ -41,8 +54,16 @@ public:
     }
 };
 
-// 插入排序
-class InsertionSort {
+/**
+ * 插入排序
+ * 每个元素对之前已经排序的序列选择合适位置插入
+ * 时间复杂度: 最坏 O(n^2)
+ *            最好 O(n) 基本有序时达到
+ *            平均 O(n^2)
+ * 稳定性：稳定
+ * 适用情况：少量数据时快于快速排序
+ */
+class InsertionSort : public MySort {
 public:
     void sort(vector<int> &q) {
         for (int i = 1; i < q.size(); i++)
@@ -55,8 +76,15 @@ public:
     }
 };
 
-// 希尔排序
-class ShellSort {
+/**
+ * 希尔排序
+ * 分组插入排序，缩小增量
+ * 时间复杂度和增量序列有关  最坏O(n^1.3-2)
+ *                        最好O(nlog2n)
+ * 稳定性：不稳定 分组插入排序会导致跳跃性交换值
+ * 适用情况：中等大小序列
+ */
+class ShellSort : public MySort{
 public:
     void sort(vector<int> &q) {
         int h = 1;
@@ -77,8 +105,17 @@ public:
     }
 };
 
-// 归并排序
-class MergeSort {
+/**
+ * 归并排序
+ * 先对半分，然后分别排序再合并，递归
+ * 时间复杂度 传统归并排序  最好O(nlogn)
+ *                       最坏O(nlogn)
+ *                       平均O(nlogn)
+ *                       需要额外T(n)存储
+ * 稳定性：稳定
+ * 适用情况：不限制额外存储的序列
+ */
+class MergeSort : public MySort {
 public:
     void merge(vector<int> &q, int l, int m, int r) {
         vector<int> tmp(q.begin(), q.end());
@@ -100,12 +137,20 @@ public:
     }
 
     void sort(vector<int> &q) {
-        recur(q, 0, q.size() - 1);
+        recur(q, 0, (int)q.size() - 1);
     }
 };
 
-// 快速排序
-class QuickSort {
+/**
+ * 快速排序
+ * 通过一个元素将序列切分成两个部分，左边小于该元素，右边大于该元素，递归
+ * 时间复杂度: 最好O(nlogn)，在每次恰好将数组对半分时达到
+ *            最坏O(n^2)，有序
+ *            平均O(nlogn)
+ * 稳定性：不稳定
+ * 适用情况：大量无序数据
+ */
+class QuickSort : public MySort{
 public:
     void recur(vector<int> &q, int l, int r) {
         if (l > r) return;
@@ -122,12 +167,21 @@ public:
     }
 
     void sort(vector<int> &q) {
-        recur(q, 0, q.size() - 1);
+        recur(q, 0, (int)q.size() - 1);
     }
 };
 
-// 堆排序
-class HeapSort {
+/**
+ * 堆排序
+ * 首先构建堆，然后每次将堆顶元素与序列最后一个元素互换，不考虑原堆顶元素，继续构建堆，循环即可得到有序序列
+ * 时间复杂度: 最好O(nlogn)
+ *            最坏O(nlogn)
+ *            平均O(nlogn)
+ * 稳定性：不稳定
+ * 适合非常大量的数据，空间复杂度为O(1)，不像快排递归栈需要空间
+ * 速度比快速排序慢，因为建堆有序程度低，并且下沉上浮交换多
+ */
+class HeapSort : public MySort {
 public:
 
     void sink(vector<int> &q, int k, int n) {

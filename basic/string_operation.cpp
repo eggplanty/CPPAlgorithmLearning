@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <sstream>
 
 using namespace std;
 
@@ -43,6 +44,38 @@ public:
             v.push_back(s.substr(0, pos));
             s = s.substr(pos + 1, s.size() - pos);
         }
+    }
+
+    // 按照' '进行字符串分割
+    void split2() {
+        string data = "   aaa,      bbb, ccc   ";
+        istringstream tt(data); // include<ssteam>
+        string temp;
+        while (tt >> temp) { // 自动处理前缀和后缀空格，中间空格不论多少，会被作为分隔符
+            cout << "---" <<temp << "---" << endl;
+        }
+        /**
+        结果为
+        ---aaa,---
+        ---bbb,---
+        ---ccc---
+         */
+    }
+
+    // 按照指定字符进行字符串分割
+    void split3() {
+        string data = "   aaa,      bbb, ccc   ";
+        istringstream tt(data); // include<ssteam>
+        string temp;
+        while (getline(tt, temp, ',')) { // 不处理前缀空格和中间多余空格，仅仅按照目标字符分割
+            cout << "---" <<temp << "---" << endl;
+        }
+        /**
+        结果为
+        ---   aaa---
+        ---      bbb---
+        --- ccc   ---
+         */
     }
 
 };
