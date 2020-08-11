@@ -108,3 +108,32 @@ public:
         return a;
     }
 };
+
+/**
+ * 1017. 负二进制转换
+ * 给出数字 N，返回由若干 "0" 和 "1"组成的字符串，该字符串为 N 的负二进制（base -2）表示。
+ * 除非字符串就是 "0"，否则返回的字符串中不能含有前导零。
+ *
+ * 长除法 由于base -2，所以余数有可能为0，1，-1(当被除数为负数时可能出现)
+ * 将-1的情况转换成+1 即可
+ */
+class Solution6 {
+public:
+    string baseNeg2(int N) {
+        // 长除法
+        if (N == 0) return "0";
+        string ans = "";
+        while (N != 0) {
+            int tmp = N%(-2);
+            if (tmp == -1) { // 余数如果是-1的话，将N/(-2)的结果上调1，使得余数变为1，满足01二进制要求
+                tmp = 1;
+                N = N / (-2) + 1;
+            } else
+                N = N / (-2);
+
+            ans += '0'+tmp;
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+};

@@ -325,3 +325,47 @@ public:
         return ans;
     }
 };
+
+
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+/**
+ * 23. 合并K个排序链表
+ * 合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+ * 除了使用归并法之外还可以使用优先级队列构建小顶堆来做
+ */
+class Solution5 {
+public:
+    struct Node {
+        int val;
+        ListNode* node;
+        bool operator > (const Node &n) const { // 必须要这两个const
+            return val > n.val;
+        }
+    };
+
+    priority_queue<Node, vector<Node>, greater<Node>> q; // greater对应调用的是operator >  , less对应调用的是operator <
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if (lists.size() == 0) return NULL;
+
+        for (auto n : lists) {
+            if (n) q.push({n->val, n});
+        }
+        ListNode *dummy = new ListNode(-1);
+        ListNode *p = dummy;
+        while (!q.empty()) {
+            Node t = q.top(); q.pop();
+            p->next = t.node;
+            p = p->next;
+            if (t.node->next)
+                q.push({t.node->next->val, t.node->next});
+        }
+        return dummy->next;
+    }
+};

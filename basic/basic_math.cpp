@@ -52,10 +52,38 @@ public:
         if (a % 2 == 1) cout << "奇数";
 
         // 高级做法，与1做与操作
-        if (a&1) cout << "奇数";
-        if (!(a&1)) cout << "偶数";
+        if (a & 1) cout << "奇数";
+        if (!(a & 1)) cout << "偶数";
 
     }
 
+    // 欧几里得法求两个数是否互质，a>b，辗转相除法，求得最大公约数
+    int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+    // 最小公约数，两数相乘，然后除以最大公约数
+    int lcm(int a, int b) {
+        return a * b / gcd(a, b);
+    }
+
+    // 爱式栅法，求n以内的所有素数，时间复杂度O(n)空间复杂度式O(n)
+    vector<int> alatosteni(int n) {
+        vector<bool> not_primes(n, false);
+        vector<int> primes;
+        for (int i = 2; i < n; ++i) {
+            if (not_primes[i])
+                continue;
+            primes.push_back(i);
+            for (int j = i * i; j < n; j += i)
+                not_primes[j] = true;
+        }
+        return primes;
+    }
+
+    // 上下取整
+    void f() {
+
+    }
 
 };

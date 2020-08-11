@@ -52,7 +52,7 @@ public:
         istringstream tt(data); // include<ssteam>
         string temp;
         while (tt >> temp) { // 自动处理前缀和后缀空格，中间空格不论多少，会被作为分隔符
-            cout << "---" <<temp << "---" << endl;
+            cout << "---" << temp << "---" << endl;
         }
         /**
         结果为
@@ -68,7 +68,7 @@ public:
         istringstream tt(data); // include<ssteam>
         string temp;
         while (getline(tt, temp, ',')) { // 不处理前缀空格和中间多余空格，仅仅按照目标字符分割
-            cout << "---" <<temp << "---" << endl;
+            cout << "---" << temp << "---" << endl;
         }
         /**
         结果为
@@ -76,6 +76,17 @@ public:
         ---      bbb---
         --- ccc   ---
          */
+    }
+
+    // 计算数组的长度
+    void charlen(char s[]) {
+        char *a = "1234455";
+        char b[] = "1234455";
+        cout << strlen(a) << endl; // 7
+        cout << sizeof(a) << endl; // 8 包含了\0
+
+        int c[] = {1,2,3,4};
+        cout << sizeof(c) / sizeof(c[0]) << endl; // 4 需要除以单个元素的长度
     }
 
 };

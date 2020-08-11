@@ -132,7 +132,7 @@ public:
         if (r <= l) return;
         int m = l + (r - l) / 2;
         recur(q, l, m);
-        recur(q, m + 1, r);
+        recur(q, m + 1, r); // 这里必须是l->m ,m+1->r 不能是l->m-1, m->r，因为m为向下取整，如果是后者可能导致m->r死循环
         merge(q, l, m, r);
     }
 
@@ -166,10 +166,30 @@ public:
         recur(q, i + 1, r);
     }
 
+    void recur2(vector<int> &v, int l, int r) {
+        if (l >= r)
+            return ;
+        int p = v[l], i = l+1, j = r;
+        while (i <= j) {
+            while (i <= j && v[i] < p) i++;
+            while (i <= j && v[j] > p) j--;
+            if (i <= j)
+                swap(v[i++], v[j--]);
+        }
+        swap(v[j], v[l]); // 以第一个数为基准时，交换的是j不是i
+        for (int k = 0; k < v.size(); ++k)
+            cout << v[k] << " ";
+        cout << endl;
+        recur2(v, l, j-1);
+        recur2(v, j+1, r);
+    }
+
     void sort(vector<int> &q) {
         recur(q, 0, (int)q.size() - 1);
     }
 };
+
+
 
 /**
  * 堆排序

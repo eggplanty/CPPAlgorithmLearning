@@ -157,3 +157,31 @@ public:
         return cnt + min(cur, pre); // 单独计算最后字符未变的情况
     }
 };
+
+
+/**
+ * 6. Z 字形变换
+ * 将一个给定字符串根据给定的行数，以从上往下、从左到右进行 Z 字形排列。
+ * 比如输入字符串为 "LEETCODEISHIRING" 行数为 3 时，排列如下：
+ *
+ * 直接计算每行对那个的元素坐标
+ */
+class Solution7 {
+public:
+    string convert(string s, int numRows) {
+        int n = s.size();
+        if (numRows == 1) return s; // c = 2*1-2 = 0，第二个for循环会超时
+
+        int c = 2*numRows - 2; // 一轮有多少
+        string res = "";
+        for (int k = 0; k < numRows; ++k) { // 第k行
+            for (int i = 0; i + k < n; i += c) {
+                int j = k+i;
+                res += s[j];
+                if (k!=0 && k!=numRows-1 && i+c-k < n)
+                    res += s[i+c-k];
+            }
+        }
+        return res;
+    }
+};

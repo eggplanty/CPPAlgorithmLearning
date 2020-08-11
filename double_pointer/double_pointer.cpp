@@ -273,3 +273,53 @@ public:
         return ans;
     }
 };
+
+
+/**
+ * 18. 四数之和
+ * 给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+ *
+ * 大体思路和三数之和一样，用双指针解，
+ * 这里可以通过判断最大值是否小于目标值，最小值是否大于目标值来提前结束循环
+ */
+class Solution11 {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> ans;
+        int n = nums.size();
+        if (n < 4) return {};
+
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n-3; ++i) {
+            if (i>0 && nums[i] == nums[i-1]) continue;
+            if (nums[i] + nums[i+1]+nums[i+2]+nums[i+3] > target) continue; // 最小值大于目标值
+            if (nums[i] + nums[n-1]+nums[n-2]+nums[n-3] < target) continue; // 最大值小于目标值
+
+            for (int j = i+1; j < n-2; ++j) {
+                if (j > i+1 && nums[j] == nums[j-1]) continue;
+                if (nums[i] + nums[j] + nums[j+1] + nums[j+2] > target) continue; // 最小值大于目标值
+                if (nums[i] + nums[j] + nums[n-1] + nums[n-2] < target) continue; // 最大值小于目标值
+
+                int k = j+1, t = n-1;
+                while (k < t) {
+                    int tmp = nums[i] + nums[j] + nums[k] + nums[t];
+                    if (tmp == target) {
+                        ans.push_back({nums[i], nums[j], nums[k], nums[t]});
+                        k++;
+                        t--;
+                        while (k<t && nums[k] == nums[k-1]) k++; // 保证数值发生变化，防止重复
+                        while (k<t && nums[t] == nums[t+1]) t--;
+                    }
+                    else if (tmp > target) {
+                        t--;
+                    }
+                    else {
+                        k++;
+                    }
+
+                }
+            }
+        }
+        return ans;
+    }
+};

@@ -61,10 +61,22 @@ class Test {
         for (auto iter = st.begin(); iter != st.end(); iter++)
             cout << *iter << endl; // 遍历
 
-        // 优先级队列，常用来构建大小顶堆
+        // set可以用去vector的唯一性判断
+        set<vector<int>> st2 = {{1, 2},
+                                {1, 2}};
+        st2.insert({1, 2}); // st2中仅包含一个{1,2}
+
+
+        // 优先级队列，常用来构建大小顶堆, greater对应结构体的使用可以参考stack_queue/stack_and_queue.cpp的Solution5 (342)
         priority_queue<int, vector<int>, greater<>> pq; // greater小顶堆， less大顶堆
         pq.push(1); // 入堆
         pq.pop(); // 出堆
         pq.top(); // 堆顶元素
+
+
+        // pair的拆分赋值
+        pair<int, int> a = {1, 2};
+        auto[b, c] = a; // 可以使用auto 和中括号来获取pair的值
+        cout << b << c << endl;// 12
     }
 };
